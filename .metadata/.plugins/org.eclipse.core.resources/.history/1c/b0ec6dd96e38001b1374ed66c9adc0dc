@@ -1,0 +1,69 @@
+package com.example.controller.admin;
+
+import java.io.IOException;
+import java.util.ResourceBundle;
+
+import javax.inject.Inject;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.example.constant.Constant;
+import com.example.model.NewsModel;
+import com.example.paging.PageRequest;
+import com.example.paging.Pageable;
+import com.example.service.ICategoryService;
+import com.example.service.INewsService;
+import com.example.sort.Sorter;
+import com.example.utils.FormUtil;
+
+@WebServlet(urlPatterns = {"/admin-news"})
+public class NewsController extends HttpServlet{
+
+	@Inject
+	private INewsService newsService;
+	
+	@Inject ICategoryService categoryService;
+	
+	private static final long serialVersionUID = 4155499165816303857L;
+	
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		NewsModel newsModel = FormUtil.toModel(NewsModel.class, req);
+		String view = "";
+		if (newsModel.getType().equalsIgnoreCase(Constant.LIST)) {
+			
+			Pageable pageable = new PageRequest(newsModel.getCurrentPage(), newsModel.getPageItems(), 
+					new Sorter(newsModel.getSortName(), newsModel.getSortBy()));
+			newsModel.setListItems(newsService.findAll(pageable));
+			newsModel.setTotalItems(newsService.getTotalItems());
+			newsModel.setTotalPages((int) Math.ceil(((double)newsModel.getTotalItems() / newsModel.getPageItems())));
+			req.setAttribute(Constant.MODEL, newsModel);
+			view = "/views/admin/news/list.jsp";
+		} else if (newsModel.getType().equalsIgnoreCase(Constant.EDIT)){
+			if (newsModel.getId() != null) {
+				req.setAttribute(Constant.MODEL, newsService.findOne(newsModel.getId()));
+				req.setAttribute(Constant.TITLE, "chỉnh sửa bài viết");
+			} else {
+				
+			}
+			req.setAttribute(Constant.CATEGORIES, categoryService.findAll());
+			view = "/views/admin/news/edit.jsp";
+		}
+		RequestDispatcher rd = req.getRequestDispatcher(view);
+		rd.forward(req, resp);
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doPost(req, resp);
+	}
+	
+
+	
+
+}

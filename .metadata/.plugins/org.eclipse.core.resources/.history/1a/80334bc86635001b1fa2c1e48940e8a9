@@ -1,0 +1,26 @@
+package com.example.mapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.example.model.NewsModel;
+import com.example.model.UserModel;
+
+public class UserMapper implements RowMapper<UserModel> {
+
+	@Override
+	public UserModel mapRow(ResultSet resultSet) {
+		try {
+			UserModel userModel = new UserModel();
+			userModel.setUsername(resultSet.getString("username"));
+			if(resultSet.getTimestamp("modifieddate") != null) newsModel.setModifiedDate(resultSet.getTimestamp("modifieddate"));
+			if(resultSet.getTimestamp("modifiedby") != null) newsModel.setModifiedBy(resultSet.getString("modifiedby"));
+			
+			
+			return newsModel;
+		} catch (SQLException e) {
+			return null;
+		}
+	}
+
+}

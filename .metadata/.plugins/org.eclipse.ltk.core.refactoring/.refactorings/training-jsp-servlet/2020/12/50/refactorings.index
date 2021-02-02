@@ -1,0 +1,8 @@
+1607245320530	Encapsulate field 'userName'
+1607323822448	Rename type 'AuthenticationFilter'
+1607328869646	Encapsulate field 'type'
+1607333399529	Delete element
+1607337081363	Encapsulate field 'categoryCode'
+1607427246563	Delete element
+1607433169961	Encapsulate field 'alert'
+1607433173551	Encapsulate field 'message'

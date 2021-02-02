@@ -1,0 +1,17 @@
+package com.example.dao.impl;
+
+import java.util.List;
+
+import com.example.dao.IUserDAO;
+import com.example.model.UserModel;
+
+public class UserDAO extends AbstractDAO<UserModel> implements IUserDAO{
+
+	@Override
+	public UserModel findByUserNameAndPasswordAndStatus(String userName, String password, String status) {
+		String sql = "SELECT * FROM user WHERE username = ?, password = ?, status = ?";
+		List<UserModel> list = query(sql, new UserMapper(), userName, password, status);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+}

@@ -1,0 +1,81 @@
+package com.example.controller.admin.api;
+
+import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.example.model.NewsModel;
+import com.example.model.UserModel;
+import com.example.service.INewsService;
+import com.example.utils.HttpUtil;
+import com.example.utils.SessionUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@WebServlet(urlPatterns = {"/api/v1/admin/news"})
+public class NewsAPI extends HttpServlet {
+
+	@Inject
+	private INewsService newsService;
+	
+	
+	private static final long serialVersionUID = 523044791033316138L;
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(resp.getOutputStream(), newsService.findAll());
+		
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		NewsModel newsModel = HttpUtil.of(req.getReader()).toModel(NewsModel.class);
+		newsModel.setCreatedBy(((UserModel) SessionUtil.getInstance().getValue(req, "USERMODEL")).getUserName());
+		newsModel = newsService.save(newsModel);
+		System.out.println(newsModel);
+		mapper.writeValue(resp.getOutputStream(), newsModel);
+		
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		NewsModel newsModel = HttpUtil.of(req.getReader()).toModel(NewsModel.class);
+		newsModel.setModifiedBy(((UserModel) SessionUtil.getInstance().getValue(req, "USERMODEL")).getUserName());
+		newsModel = newsService.update(newsModel);
+		System.out.println(newsModel);
+		mapper.writeValue(resp.getOutputStream(), newsModel);
+		
+		
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		NewsModel newsModel = HttpUtil.of(req.getReader()).toModel(NewsModel.class);
+		newsService.delete(newsModel.getIds());
+		mapper.writeValue(resp.getOutputStream(), "{}");
+		
+	}
+	
+	
+
+}

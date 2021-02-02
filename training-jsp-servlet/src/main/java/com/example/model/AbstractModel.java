@@ -1,0 +1,131 @@
+package com.example.model;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+public class AbstractModel<T> {
+	
+	private Long id;
+	private Timestamp createdDate;
+	private Timestamp modifiedDate;
+	private String createdBy;
+	private String modifiedBy;
+	private Long[] ids;
+	private List<T> listItems;
+	private Integer currentPage;
+	private Integer totalPages;
+	private Integer pageItems;
+	private Integer totalItems;
+	private String sortName;
+	private String sortBy;
+	private String type;
+	private String alert;
+	private String message;
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Timestamp getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Timestamp createdDate) {
+		this.createdDate = createdDate;
+	}
+	public Timestamp getModifiedDate() {
+		return modifiedDate;
+	}
+	public void setModifiedDate(Timestamp modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+	public String getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	public String getModifiedBy() {
+		return modifiedBy;
+	}
+	public void setModifiedBy(String modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+	public Long[] getIds() {
+		return ids;
+	}
+	public void setIds(Long[] ids) {
+		this.ids = ids;
+	}
+	public List<T> getListItems() {
+		return listItems;
+	}
+	public void setListItems(List<T> listItems) {
+		this.listItems = listItems;
+	}
+	public Integer getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(Integer currentPage) {
+		this.currentPage = currentPage;
+	}
+	public Integer getTotalPages() {
+		return totalPages;
+	}
+	public void setTotalPages(Integer totalPages) {
+		this.totalPages = totalPages;
+	}
+	public Integer getPageItems() {
+		return pageItems;
+	}
+	public void setPageItems(Integer pageItems) {
+		this.pageItems = pageItems;
+	}
+	public Integer getTotalItems() {
+		return totalItems;
+	}
+	public void setTotalItems(Integer totalItems) {
+		this.totalItems = totalItems;
+	}
+	public String getSortName() {
+		return sortName;
+	}
+	public void setSortName(String sortName) {
+		this.sortName = sortName;
+	}
+	public String getSortBy() {
+		return sortBy;
+	}
+	public void setSortBy(String sortBy) {
+		this.sortBy = sortBy;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getAlert() {
+		return alert;
+	}
+	public void setAlert(String alert) {
+		this.alert = alert;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+}
+
+
+
+
+
+
+
+

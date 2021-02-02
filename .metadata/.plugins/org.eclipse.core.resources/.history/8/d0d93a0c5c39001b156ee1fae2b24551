@@ -1,0 +1,181 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="/common/taglib.jsp"%>
+<c:url var="newsAPI" value="/api/v1/admin/news"></c:url>
+<c:url var="newsURL" value="/admin-news">
+	<c:param name="type" value="list"></c:param>
+	<c:param name="currentPage" value="1"></c:param>
+	<c:param name="pageItems" value="5"></c:param>
+	<c:param name="sortName" value="title"></c:param>
+	<c:param name="sortBy" value="desc"></c:param>
+</c:url>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách bài viết</title>
+</head>
+
+<body>
+
+
+	
+	<c:url var="addURL" value="/admin-news">
+		<c:param name="type" value="edit"></c:param>
+	</c:url>
+
+    <form action="<c:url value='/admin-news'/>" id="form__submit" method="get">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800 text-uppercase">danh sách bài viết</h1>
+	            <div class="alert alert-${alert}" role="alert">
+				  	${message}
+				</div>
+            	<div>
+	              	<a href="${addURL}" class="btn btn-outline-success">
+	              		<i class="fas fa-plus-square"></i> Thêm
+	              	</a>
+            	</div>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        	<th scope="col" style="padding-left:50px !important;"><input type="checkbox" class="form-check-input" id="checkboxAll">&nbsp;</th>
+                            <th scope="col">Tên bài viết</th>
+                            <th scope="col">Mô tả</th>
+                            <th scope="col">Tùy chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item" items="${model.listItems}">
+                        	<c:url var="editURL" value="/admin-news">
+								<c:param name="type" value="edit"></c:param>
+								<c:param name="id" value="${item.id}"></c:param>
+							</c:url>
+                            <tr>
+                            	<td style="padding-left:50px !important;"><input type="checkbox" class="form-check-input" name="check" id="checkItem__${item.id}" value="${item.id}"></td>
+                                <td scope="row">${item.title}</td>
+                                <td scope="row">${item.shortDescription}</td>
+                                <td scope="row">
+                                	<a href="${editURL}" class="btn btn-outline-primary">
+										<i class="fas fa-edit"></i> Chỉnh sửa
+                                	</a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                
+                
+                
+		        <div class="d-sm-flex align-items-center justify-content-between mb-4 align-top">
+	            	<div style="margin-top:-15px !important;">
+		      	        <a class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteItems" id="btnDelete">
+		                     <i class="fas fa-trash-alt"></i> Xóa
+		                </a>
+	            	</div>
+	                <div class="mx-auto">
+	                    <ul class="pagination" id="pagination"></ul>
+	                    <input type="hidden" name="type" value="list">
+	                    <input type="hidden" id="current__page" name="currentPage" value="">
+	                    <input type="hidden" id="page__items" name="pageItems" value="">
+	                    <input type="hidden" id="sort__name" name="sortName" value="">
+	                    <input type="hidden" id="sort__by" name="sortBy" value="">
+	                </div>
+		        </div>
+		        
+		        <!-- Modal -->
+		        <div class="modal fade" id="deleteItems" tabindex="-1" role="dialog" aria-labelledby="deleteItems" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-centered" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" >Bạn chắc chắn xóa?</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+				        <button type="button" class="btn btn-danger" id="btnDeleteItems">Đồng ý</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>   
+            </div>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        const currentPage = ${model.currentPage};
+        const totalPages = ${model.totalPages};
+        const pageItems = ${model.pageItems};
+        const limit = 5;
+        const sortName = 'title';
+        const sortBy = 'desc';
+        
+
+        $(function () {
+            window.pagObj = $('#pagination').twbsPagination({
+                totalPages: totalPages,
+                visiblePages: limit,
+                startPage: currentPage,
+                onPageClick: function (event, page) {
+                    if (currentPage != page) {
+                        $('#current__page').val(page);
+                        $('#page__items').val(limit);
+                        $('#sort__name').val(sortName);
+                        $('#sort__by').val(sortBy);
+                        $('#form__submit').submit();
+
+                    }
+                }
+            });
+            
+        	var dataArray = $('tbody input[type=checkbox]:checked').map(function() {
+        		return $(this).val();
+        	}).get();
+        	console.log(dataArray);
+        	if(dataArray = []) {
+        		$('#btnDelete').attr("aria-disabled", true);
+        	}
+            
+            
+        });
+        
+        $('#btnDeleteItems').click(function() {
+        	var dataArray = $('tbody input[type=checkbox]:checked').map(function() {
+        		return $(this).val();
+        	}).get();
+        	data['ids'] = dataArray;
+        	deleteNews(data);
+        });
+        
+        
+    	function deleteNews(data) {
+    		$.ajax({
+    			url: "${newsAPI}",
+    			contentType: "application/json",
+    			type: "DELETE",
+    			data: JSON.stringify(data),
+    			dataType: 'json',
+    			success: function(result) {
+    				window.location.href = "${newsURL}&alert=success&message=delete_success";
+    			},
+    			error: function(result) {
+    				window.location.href = "${newsURL}&alert=danger&message=delete_fail";
+    			},
+    		});
+    	}
+        
+        
+        
+    </script>
+
+</body>
+
+</html>
